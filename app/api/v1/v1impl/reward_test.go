@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
-	"strings"
 	"testing"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -574,7 +574,9 @@ func TestRewardService_CreateReward(t *testing.T) {
 					Return(tt.BatchUpdateEloWant.err)
 			}
 
+			beforeTime := time.Now().Unix()
 			err := svc.CreateReward(tt.args.ctx)
+			afterTime := time.Now().Unix()
 			if tt.wantErr {
 				assert.Equal(t, tt.err.Error(), err.Error())
 			} else {
@@ -582,8 +584,23 @@ func TestRewardService_CreateReward(t *testing.T) {
 			}
 
 			if tt.want != nil {
-				wantMarshal, _ := json.Marshal(tt.want)
-				assert.Equal(t, string(wantMarshal), strings.TrimSuffix(rec.Body.String(), "\n"))
+				var resp v1.CreateRewardResponse
+				err = json.Unmarshal(rec.Body.Bytes(), &resp)
+				assert.NoError(t, err)
+				wantMarshal, err := json.Marshal(tt.want)
+				assert.NoError(t, err)
+				// Verify timestamp is within reasonable range
+				assert.True(t, resp.Items[0].UpdatedAt >= beforeTime)
+				assert.True(t, resp.Items[0].UpdatedAt <= afterTime)
+
+				// Remove time field in response to compare
+				for _, item := range resp.Items {
+					item.UpdatedAt = 0
+				}
+
+				respMarshal, err := json.Marshal(resp)
+				assert.NoError(t, err)
+				assert.Equal(t, string(wantMarshal), string(respMarshal))
 			}
 		})
 	}

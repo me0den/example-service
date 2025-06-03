@@ -11,9 +11,10 @@ type RewardService interface {
 }
 
 type Reward struct {
-	UserID string `json:"userID,omitempty"`
-	OldElo int    `json:"oldElo,omitempty"`
-	NewElo int    `json:"newElo"`
+	UserID    string `json:"userID"`
+	OldElo    int    `json:"oldElo"`
+	NewElo    int    `json:"newElo"`
+	UpdatedAt int64  `json:"updatedAt"`
 }
 
 type Rewards struct {

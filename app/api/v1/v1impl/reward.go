@@ -2,9 +2,9 @@ package v1impl
 
 import (
 	"context"
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"net/http"
+	"time"
 
 	v1 "github.com/me0den/example-service/app/api/v1"
 	"github.com/me0den/example-service/domain/entity"
@@ -26,6 +26,7 @@ func NewRewardService(
 }
 
 func (s *RewardService) CreateReward(c echo.Context) error {
+	updatedAt := time.Now().Unix()
 	req := new(v1.CreateRewardRequest)
 	if err := c.Bind(req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -46,9 +47,10 @@ func (s *RewardService) CreateReward(c echo.Context) error {
 	res := &v1.CreateRewardResponse{}
 	for idx, elo := range newUserElos {
 		rankReward := &v1.Reward{
-			NewElo: elo.Elo,
-			OldElo: userElos[idx].Elo,
-			UserID: elo.UserID,
+			NewElo:    elo.Elo,
+			OldElo:    userElos[idx].Elo,
+			UserID:    elo.UserID,
+			UpdatedAt: updatedAt,
 		}
 
 		res.Items = append(res.Items, rankReward)
