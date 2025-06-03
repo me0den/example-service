@@ -8,6 +8,7 @@ import (
 	v1 "github.com/me0den/example-service/app/api/v1"
 )
 
+// RegisterRoutes implement and config routing for http server.
 func RegisterRoutes(e *echo.Echo, rewardService v1.RewardService) {
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")

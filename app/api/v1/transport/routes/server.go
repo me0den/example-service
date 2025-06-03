@@ -19,16 +19,19 @@ import (
 	v1 "github.com/me0den/example-service/app/api/v1"
 )
 
+// ServerFXModule represents a FX module for http server.
 var ServerFXModule = fx.Options(
 	fx.Invoke(
 		startHTTPServer,
 	),
 )
 
+// Validator custom validator for echo.
 type Validator struct {
 	Validator *validator.Validate
 }
 
+// Validate implement custom validate.
 func (v *Validator) Validate(i interface{}) error {
 	if err := v.Validator.Struct(i); err != nil {
 		var validationErrors validator.ValidationErrors
@@ -50,6 +53,7 @@ func (v *Validator) Validate(i interface{}) error {
 	return nil
 }
 
+// startHTTPServer create a new instance echo http server.
 func startHTTPServer(rewardService v1.RewardService) {
 	// Echo instance
 	e := echo.New()

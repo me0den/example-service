@@ -2,19 +2,22 @@ package v1impl
 
 import (
 	"context"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"time"
+
+	"github.com/labstack/echo/v4"
 
 	v1 "github.com/me0den/example-service/app/api/v1"
 	"github.com/me0den/example-service/domain/entity"
 	"github.com/me0den/example-service/domain/repo"
 )
 
+// RewardService implements all use cases of reward service.
 type RewardService struct {
 	redisRepo repo.RedisRepo
 }
 
+// NewRewardService creates and returns new instance of RewardService.
 func NewRewardService(
 	redisRepo repo.RedisRepo,
 ) v1.RewardService {
@@ -25,6 +28,7 @@ func NewRewardService(
 	return svc
 }
 
+// CreateReward to calculate and update new reward elo for user after a battle.
 func (s *RewardService) CreateReward(c echo.Context) error {
 	updatedAt := time.Now().Unix()
 	req := new(v1.CreateRewardRequest)
@@ -63,6 +67,7 @@ func (s *RewardService) CreateReward(c echo.Context) error {
 	return c.JSON(http.StatusOK, &res)
 }
 
+// listUserElos to list all current elo of users.
 func (s *RewardService) listUserElos(ctx context.Context, teams []*entity.Team) ([]*entity.UserElo, error) {
 	var userElos []*entity.UserElo
 	for _, team := range teams {
@@ -77,6 +82,7 @@ func (s *RewardService) listUserElos(ctx context.Context, teams []*entity.Team) 
 	return userElos, nil
 }
 
+// calculateElo to calculate the new elo based on battle result.
 func (s *RewardService) calculateElo(ctx context.Context, userElos []*entity.UserElo, winnerIdx int) []*entity.UserElo {
 	newUserElos := []*entity.UserElo{
 		userElos[0].Clone(),

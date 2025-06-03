@@ -2,9 +2,9 @@ package cache
 
 import (
 	"fmt"
-	"go.uber.org/fx"
 
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/fx"
 
 	"github.com/me0den/example-service/infra/config"
 	mRedis "github.com/me0den/example-service/x/redis"

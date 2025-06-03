@@ -6,10 +6,12 @@ import (
 	"github.com/me0den/example-service/domain/entity"
 )
 
+// RewardService exposes all available use cases of reward.
 type RewardService interface {
 	CreateReward(c echo.Context) error
 }
 
+// Reward represent for the user reward.
 type Reward struct {
 	UserID    string `json:"userID"`
 	OldElo    int    `json:"oldElo"`
@@ -17,10 +19,12 @@ type Reward struct {
 	UpdatedAt int64  `json:"updatedAt"`
 }
 
+// Rewards represent for list reward of users.
 type Rewards struct {
 	Items []*Reward `json:"rewards"`
 }
 
+// CreateRewardRequest represents for request of create reward for user.
 type CreateRewardRequest struct {
 	Winner string         `json:"winner" validate:"required"`
 	Teams  []*entity.Team `json:"teams" validate:"required,eq=2"`
@@ -44,4 +48,5 @@ func (c *CreateRewardRequest) GetWinnerIndex() int {
 	return winnerIndex
 }
 
+// CreateRewardResponse represents for response create reward.
 type CreateRewardResponse = Rewards

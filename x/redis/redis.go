@@ -41,6 +41,7 @@ func New(cfg *Config) (Redis, error) {
 	if cfg.MinIdleConns == 0 {
 		cfg.MinIdleConns = 10
 	}
+
 	redisOpt := &redis.Options{
 		Addr:         fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 		Password:     cfg.Password,
@@ -54,7 +55,6 @@ func New(cfg *Config) (Redis, error) {
 
 	if cfg.TLSConfig != nil {
 		tlsConfig := &tls.Config{
-			//nolint:gosec
 			InsecureSkipVerify: cfg.TLSConfig.InsecureSkipVerify,
 			MinVersion:         tls.VersionTLS12,
 		}
@@ -74,11 +74,13 @@ func New(cfg *Config) (Redis, error) {
 	// Connect to redis server
 	client := redis.NewClient(redisOpt)
 	log.Println("Pinging to Redis Server: ", cfg.Host, cfg.Port, cfg.Database)
-	_, err := client.Ping(context.Background()).Result()
-	if err != nil {
+
+	if _, err := client.Ping(context.Background()).Result(); err != nil {
 		return nil, err
 	}
+
 	log.Println("Connected to Redis Server")
+
 	return &mRedis{
 		client: client,
 	}, nil
